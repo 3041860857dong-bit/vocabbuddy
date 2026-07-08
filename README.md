@@ -89,9 +89,7 @@ vocabbuddy/
 │   ├── nginx.conf            # HTTPS 反代
 │   ├── vocabbuddy.service    # systemd 单元
 │   └── .env.server.example   # 服务端环境变量模板
-├── deliverables/             # PRD / 设计文档等交付物
 ├── DEPLOYMENT.md             # 部署手册
-├── VocabBuddy_MVP_PRD.md     # 产品需求文档
 └── .env.example              # 根环境变量模板（真实 .env 已被忽略）
 ```
 
