@@ -1,0 +1,22 @@
+# ===== 环境变量与密钥（绝不可入库） =====
+.env
+.env.*
+!.env.example
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+*.log
+backend/logs/
+
+# ===== 系统/编辑器 =====
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# ===== 本地 AI 工具记忆（不入库） =====
+.workbuddy/

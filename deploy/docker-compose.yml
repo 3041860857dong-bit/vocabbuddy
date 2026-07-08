@@ -1,0 +1,23 @@
+# 项目根目录执行：
+#   docker compose --env-file .env -f deploy/docker-compose.yml up -d --build
+#
+# 本编排【只起应用】。数据库使用腾讯云 TencentDB for MySQL（托管），
+# 连接串在 .env 的 VOCABBUDDY_DB_URL 中配置（用 TencentDB 的内网/外网地址）。
+# 若不想用托管库、想用容器自带 MySQL，改用 deploy/docker-compose.db.yml。
+services:
+  app:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    environment:
+      VOCABBUDDY_ENV: production
+      VOCABBUDDY_DB_URL: ${VOCABBUDDY_DB_URL}
+      VOCABBUDDY_JWT_SECRET: ${VOCABBUDDY_JWT_SECRET}
+      VOCABBUDDY_JWT_EXPIRE_MINUTES: "1440"
+      VOCABBUDDY_LLM_API_KEY: ${VOCABBUDDY_LLM_API_KEY}
+      VOCABBUDDY_LLM_BASE_URL: https://api.deepseek.com/v1
+      VOCABBUDDY_LLM_MODEL: deepseek-chat
+      VOCABBUDDY_CORS_ORIGINS: ${VOCABBUDDY_CORS_ORIGINS}
+    ports:
+      - "8000:8000"

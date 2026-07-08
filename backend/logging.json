@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "formatters": {
+    "default": {
+      "format": "%(asctime)s | %(levelname)-8s | %(name)s:%(lineno)d | %(message)s",
+      "datefmt": "%Y-%m-%d %H:%M:%S"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "formatter": "default",
+      "level": "INFO",
+      "stream": "ext://sys.stdout"
+    },
+    "file": {
+      "class": "logging.handlers.TimedRotatingFileHandler",
+      "formatter": "default",
+      "level": "INFO",
+      "filename": "D:/text/123/backend/logs/vocabbuddy.log",
+      "when": "midnight",
+      "interval": 1,
+      "backupCount": 14,
+      "encoding": "utf-8",
+      "delay": false
+    }
+  },
+  "root": {
+    "level": "INFO",
+    "handlers": ["console", "file"]
+  }
+}

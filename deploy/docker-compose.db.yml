@@ -1,0 +1,45 @@
+# 备选编排：不用腾讯云 TencentDB，改用容器自带 MySQL（零额外费用，但需自管备份/高可用）。
+# 执行：docker compose --env-file .env -f deploy/docker-compose.db.yml up -d --build
+#
+# 注意：.env 需额外提供 MYSQL_ROOT_PASSWORD（仅容器库使用）。
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: vocabbuddy
+      MYSQL_USER: vocabbuddy
+      MYSQL_PASSWORD: ${APP_DB_PASSWORD}
+    # 库级使用 utf8mb4（en 列已用 utf8mb4_bin 列级排序规则，避免重音词冲突）
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      VOCABBUDDY_ENV: production
+      VOCABBUDDY_DB_URL: mysql+pymysql://vocabbuddy:${APP_DB_PASSWORD}@db:3306/vocabbuddy
+      VOCABBUDDY_JWT_SECRET: ${VOCABBUDDY_JWT_SECRET}
+      VOCABBUDDY_JWT_EXPIRE_MINUTES: "1440"
+      VOCABBUDDY_LLM_API_KEY: ${VOCABBUDDY_LLM_API_KEY}
+      VOCABBUDDY_LLM_BASE_URL: https://api.deepseek.com/v1
+      VOCABBUDDY_LLM_MODEL: deepseek-chat
+      VOCABBUDDY_CORS_ORIGINS: ${VOCABBUDDY_CORS_ORIGINS}
+    ports:
+      - "8000:8000"
+
+volumes:
+  db_data:

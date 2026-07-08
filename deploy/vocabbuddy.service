@@ -1,0 +1,19 @@
+[Unit]
+Description=VocabBuddy FastAPI backend
+After=network.target
+# 若 MySQL 也用本机系统服务管理，可附加：mysql.service
+
+[Service]
+Type=simple
+User=vocabbuddy
+WorkingDirectory=/opt/vocabbuddy
+Environment=VOCABBUDDY_ENV=production
+# 所有密钥/连接串放进 /opt/vocabbuddy/.env，由 EnvironmentFile 引入；
+# 也可直接写成 Environment=KEY=VALUE 多行。
+EnvironmentFile=/opt/vocabbuddy/.env
+ExecStart=/opt/vocabbuddy/venv/bin/python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000 --workers 4
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
